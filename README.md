@@ -1,2 +1,2 @@
-# Scaffolder 
-# A mono repo project template 
+# TagCraft 
+# The only HTML head tag generator you would need... 
