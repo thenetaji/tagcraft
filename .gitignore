@@ -18,6 +18,8 @@ logs/
 dist/
 build/
 *.out
+tmp/
+dest/
 
 # Editor and OS-specific files
 .vscode/

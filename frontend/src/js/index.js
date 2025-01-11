@@ -80,25 +80,29 @@ document
     generatedTags.textContent = metaTags.trim();
   });
 
-document.getElementById("siteIcon").addEventListener("change",async (event) => {
-  console.log("triggered",event);
-  event.preventDefault();
-  const formData = new FormData();
-  const imageFile = event.target.files[0];
-  formData.append("icon_image",imageFile);
-  const appName = document.getElementById("appName").value || null;
-  
-  const req = await fetch("http://localhost:2626/api",{
-    method: "POST",
-    body: {
-      formData,
-      appName
-    }
+document
+  .getElementById("siteIcon")
+  .addEventListener("change", async (event) => {
+    console.log("triggered", event);
+    event.preventDefault();
+    const formData = new FormData();
+    const imageFile = event.target.files[0];
+    formData.append("icon_image", imageFile);
+    const appName = document.getElementById("appName").value || null;
+
+    const req = await fetch("http://localhost:2626/api", {
+      method: "POST",
+      body: {
+        formData,
+        appName,
+      },
+    });
+    const res = await req.json();
+    if (!res.ok) throw new Error("An error occurred");
+
+    const downloadDiv = document
+      .querySelector(".download-btn-div")
+      .classList.remove("hidden");
+    const downloadBtn = (document.getElementById("download-btn").href =
+      res.link);
   });
-  const res = await req.json();
-  if(!res.ok) throw new Error("An error occurred");
-  
-  const downloadDiv =
-  document.querySelector(".download-btn-div").classList.remove("hidden");
-  const downloadBtn = document.getElementById("download-btn").href = res.link;
-});

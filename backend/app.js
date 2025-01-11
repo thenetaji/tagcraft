@@ -1,29 +1,31 @@
 import express from "express";
 import path from "path";
-import fs from "fs/promises";
-import { makeFavicons, makeZip } from "./utils.js";
+import { fileURLToPath } from "url";
+import multer from "multer";
+import fsPromises from "fs/promises";
+import { makeFavicons, makeZip, postProcess } from "./utils.js";
+import fs from "fs";
 
 const app = express();
-
 app.use(express.json());
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const uploadsDir = path.resolve(__dirname, "tmp", "uploads");
+const destDir = path.resolve(__dirname, "tmp", "dest");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const fileName = `${Date.now()}-${file.originalname}`;
+    const fileExtension = file.mimetype.split("/")[1];
+    const fileName = `${Date.now()}.${fileExtension}`;
     cb(null, fileName);
   },
 });
-
 const upload = multer({ storage });
-
-// Middleware to parse JSON body
-app.use(express.json());
 
 /**
  * POST /api - Process and generate favicons
@@ -32,7 +34,6 @@ app.post("/api", upload.single("icon_image"), async (req, res) => {
   try {
     // Accessing the uploaded file
     const file = req.file;
-
     // Accessing additional text data from the request body
     const textData = req.body;
 
@@ -43,15 +44,17 @@ app.post("/api", upload.single("icon_image"), async (req, res) => {
     if (!file) {
       return res.status(400).json({ error: "File is required." });
     }
+    
+    const id = file.path.split("/uploads")[1].split(".")[0].split("/")[1];
 
-    // Return a response
     res.status(200).json({
-      message: "File and text data received successfully.",
-      file: {
-        originalName: file.originalname,
-        path: file.path,
-      },
-      textData,
+      status: "OK",
+      id: id + ".zip",
+      //eg "/home/admin/tagcraft/backend/tmp/uploads/1736623416413.jpeg"
+    });
+    
+    setImmediate(() => {
+      postProcess(id, file.path);
     });
   } catch (err) {
     console.error("Error in processing request:", err);
@@ -59,8 +62,9 @@ app.post("/api", upload.single("icon_image"), async (req, res) => {
   }
 });
 
+
 /**
- * GET /api/download - Download the generated ZIP file
+ * GET /api - Download the generated ZIP file
  */
 app.get("/api", async (req, res) => {
   const { q } = req.query;
@@ -69,20 +73,21 @@ app.get("/api", async (req, res) => {
     return res.status(400).json({ error: "Path is not defined or invalid" });
   }
 
-  const downloadPath = path.join(buildDir, q);
+  const downloadPath = path.join(destDir, q);
 
   try {
     console.log("Attempting to access:", downloadPath);
 
-    await fs.access(downloadPath);
+    // Use fs.promises.access here
+    await fsPromises.access(downloadPath); // Make sure to use fs.promises.access
 
-    const { size } = await fs.stat(downloadPath);
-    const response = await fs.readFile(downloadPath);
+    const { size } = await fsPromises.stat(downloadPath); // Use fs.promises.stat
+    const response = await fsPromises.readFile(downloadPath); // Use fs.promises.readFile
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${path.basename(q)}"`,
+      `attachment; filename="${path.basename(q)}"`
     );
     res.setHeader("Content-Length", size);
 
@@ -94,5 +99,18 @@ app.get("/api", async (req, res) => {
 });
 
 app.listen(2626, () => {
-  console.log("Hello");
+  const uploadDir = "./tmp/uploads";
+  const buildDir = "./tmp/build";
+
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+  }
+  if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir, { recursive: true });
+  }
+
+  console.log("Server started at 2626");
 });

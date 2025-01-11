@@ -127,7 +127,7 @@
     <!-- Google tag (gtag.js) -->
     <script>
       partytown = {
-        forward: ["dataLayer.push"]
+        forward: ["dataLayer.push"],
       };
     </script>
     <script src="/~partytown/partytown.js" async></script>
@@ -360,7 +360,8 @@
                 type="url"
                 id="ogImage"
                 placeholder="Image URL (Auto added)"
-                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50" disabled
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50"
+                disabled
               />
             </div>
           </div>
@@ -418,32 +419,33 @@
                 type="url"
                 id="twitterImage"
                 placeholder="Image URL for Twitter (Auto added)"
-                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50" disabled
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50"
+                disabled
               />
             </div>
           </div>
         </fieldset>
 
         <!-- Submit -->
-      <div class="flex justify-center items-center p-4 space-x-4">
-        <div class="text-center">
-          <button
-            type="submit"
-            class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
-          >
-            Generate Metadata
-          </button>
+        <div class="flex justify-center items-center p-4 space-x-4">
+          <div class="text-center">
+            <button
+              type="submit"
+              class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
+            >
+              Generate Metadata
+            </button>
+          </div>
+          <div class="text-center hidden download-btn-div">
+            <button
+              id="download-btn"
+              type="submit"
+              class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
+            >
+              Download Package
+            </button>
+          </div>
         </div>
-                <div class="text-center hidden download-btn-div">
-          <button
-          id="download-btn"
-            type="submit"
-            class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
-          >
-            Download Package
-          </button>
-        </div>
-      </div>
       </form>
 
       <!-- Result -->
