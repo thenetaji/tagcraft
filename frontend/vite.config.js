@@ -4,11 +4,9 @@ export default defineConfig({
   build: {
     outDir: "build",
     emptyOutDir: true,
-    rollupOptions: {
-    },
+    rollupOptions: {},
   },
   server: {
-    open: true,
     port: 5173,
   },
   css: {

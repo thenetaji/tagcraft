@@ -36,15 +36,16 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "index.html"),
-        filename: "index-[contenthash].html",
-        title: "Site Title",
-      }),
-    ...pages.map(page => 
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "src", "html", page.template),
-        filename: `html/${page.filename}-[contenthash].html`,
-      })
+      template: path.resolve(__dirname, "index.html"),
+      filename: "index-[contenthash].html",
+      title: "Site Title",
+    }),
+    ...pages.map(
+      (page) =>
+        new HtmlWebpackPlugin({
+          template: path.resolve(__dirname, "src", "html", page.template),
+          filename: `html/${page.filename}-[contenthash].html`,
+        }),
     ),
     new MiniCssExtractPlugin({
       filename: "css/[name]-[contenthash].css",

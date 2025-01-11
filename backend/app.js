@@ -1,148 +1,116 @@
-import { Hono } from "hono";
-import { promises as fsPromises } from "fs";
-import sharp from "sharp";
-import archiver from "archiver";
+import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
+import multer from "multer";
+import fsPromises from "fs/promises";
+import { makeFavicons, makeZip, postProcess } from "./utils.js";
+import fs from "fs";
 
-const app = new Hono();
+const app = express();
+app.use(express.json());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadsDir = path.resolve(__dirname, "tmp", "uploads");
+const destDir = path.resolve(__dirname, "tmp", "dest");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const fileExtension = file.mimetype.split("/")[1];
+    const fileName = `${Date.now()}.${fileExtension}`;
+    cb(null, fileName);
+  },
+});
+const upload = multer({ storage });
+
+/**
+ * POST /api - Process and generate favicons
+ */
+app.post("/api", upload.single("icon_image"), async (req, res) => {
+  try {
+    // Accessing the uploaded file
+    const file = req.file;
+    // Accessing additional text data from the request body
+    const textData = req.body;
+
+    // Debug log the file and text data
+    console.log("Uploaded file:", file);
+    console.log("Text data:", textData);
+
+    if (!file) {
+      return res.status(400).json({ error: "File is required." });
+    }
+    
+    const id = file.path.split("/uploads")[1].split(".")[0].split("/")[1];
+
+    res.status(200).json({
+      status: "OK",
+      id: id + ".zip",
+      //eg "/home/admin/tagcraft/backend/tmp/uploads/1736623416413.jpeg"
+    });
+    
+    setImmediate(() => {
+      postProcess(id, file.path);
+    });
+  } catch (err) {
+    console.error("Error in processing request:", err);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
 
 
-const cwd = process.cwd();
-const uploadsDir = path.join(cwd, "uploads");
-const buildDir = path.join(cwd, "build");
+/**
+ * GET /api - Download the generated ZIP file
+ */
+app.get("/api", async (req, res) => {
+  const { q } = req.query;
 
-app.get("/api", async (ctx) => {
-  const query = ctx.req.query();
-  const { p } = query;
-
-  if (!p || !p.includes(".zip")) {
-    return ctx.json({ error: "Path is not defined or invalid" }, 400);
+  if (!q || !q.endsWith(".zip")) {
+    return res.status(400).json({ error: "Path is not defined or invalid" });
   }
 
-  const downloadPath = path.join(buildDir, p);
+  const downloadPath = path.join(destDir, q);
 
   try {
     console.log("Attempting to access:", downloadPath);
 
-    await fsPromises.access(downloadPath);
+    // Use fs.promises.access here
+    await fsPromises.access(downloadPath); // Make sure to use fs.promises.access
 
-    const { size } = await fsPromises.stat(downloadPath);
-    const response = await fsPromises.readFile(downloadPath);
+    const { size } = await fsPromises.stat(downloadPath); // Use fs.promises.stat
+    const response = await fsPromises.readFile(downloadPath); // Use fs.promises.readFile
 
-    ctx.header("Content-Type", "application/zip");
-    ctx.header("Content-Disposition", `attachment; filename="${p}"`);
-    ctx.header("Content-Length", size);
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${path.basename(q)}"`
+    );
+    res.setHeader("Content-Length", size);
 
-    return ctx.body(response);
+    return res.send(response);
   } catch (err) {
     console.error("Error in sending data:", err);
-
-    return ctx.json({ error: err.message }, 500);
+    return res.status(500).json({ error: err.message });
   }
 });
 
-app.post("/api", async (ctx) => {
-  try {
-    const body = await ctx.req.parseBody();
-    const meta = await saveFile(body);
-    console.log("meta", meta);
+app.listen(2626, () => {
+  const uploadDir = "./tmp/uploads";
+  const buildDir = "./tmp/build";
 
-    const processedIcon = await makeFavicons(meta);
-    console.log("processedIcon", processedIcon);
-
-    const resultZip = await makeZip(processedIcon);
-    console.log("resultZip value", resultZip);
-
-    return ctx.json({ url: resultZip });
-  } catch (err) {
-    console.error("Error in processing request:", err);
-    return ctx.status(500).json({ error: err.message });
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
   }
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+  }
+  if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir, { recursive: true });
+  }
+
+  console.log("Server started at 2626");
 });
-
-export default app;
-
-async function saveFile(body) {
-  try {
-    const file = body["image"];
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    const { name, type, size } = file;
-    const extension = path.extname(name);
-    const baseName = path.basename(name, extension);
-    const uniqueFilename = `${baseName}-${Date.now()}${extension}`;
-
-    await fsPromises.access(uploadsDir).catch(() =>
-      fsPromises.mkdir(uploadsDir, { recursive: true })
-    );
-
-    const fullFilename = path.join(uploadsDir, uniqueFilename);
-
-    await fsPromises.writeFile(fullFilename, buffer);
-
-    return {
-      name: fullFilename,
-      size,
-      type,
-    };
-  } catch (err) {
-    throw new Error(`Error in saving file: ${err.message}`);
-  }
-}
-
-async function makeFavicons({ name }) {
-  const icons = [
-    { size: "16x16", name: "favicon-16x16.png" },
-    { size: "32x32", name: "favicon-32x32.png" },
-    { size: "120x120", name: "apple-touch-icon-120x120.png" },
-    { size: "180x180", name: "apple-touch-icon-180x180.png" },
-  ];
-
-  const uniqueFolder = path.join(buildDir, `tagcraft-${Date.now()}`, "icons");
-
-  await fsPromises.access(uniqueFolder).catch(() =>
-    fsPromises.mkdir(uniqueFolder, { recursive: true })
-  );
-
-  for (const icon of icons) {
-    try {
-      await sharp(name)
-        .resize(
-          parseInt(icon.size.split("x")[0]),
-          parseInt(icon.size.split("x")[1])
-        )
-        .toFile(path.join(uniqueFolder, icon.name));
-    } catch (err) {
-      console.error(`Error processing ${icon.name}:`, err);
-      throw new Error("An internal error occurred while processing the favicon");
-    }
-  }
-
-  return uniqueFolder;
-}
-
-async function makeZip(folderPath) {
-  const dest = path.join(buildDir, `${path.basename(folderPath)}.zip`);
-
-  await fsPromises.access(buildDir).catch(() =>
-    fsPromises.mkdir(buildDir, { recursive: true })
-  );
-
-  const output = fs.createWriteStream(dest);
-  const archive = archiver("zip", { zlib: { level: 9 } });
-
-  output.on("close", () => {
-    console.info("Created archive of size", archive.pointer());
-  });
-
-  output.on("error", (err) => {
-    console.error("Error in archiving", err);
-    throw err;
-  });
-
-  archive.pipe(output);
-  archive.directory(folderPath, false);
-  await archive.finalize();
-
-  return dest;
-}
