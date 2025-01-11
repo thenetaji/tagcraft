@@ -3,7 +3,7 @@ import path from "path";
 export default {
   mode: "production",
   target: "node",
-  entry: "./node.js",
+  entry: "./app.js",
   output: {
     filename: "index.js",
     path: path.resolve(),
@@ -36,3 +36,4 @@ export default {
     ],
   },
 };
+

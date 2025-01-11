@@ -5,9 +5,20 @@ import multer from "multer";
 import fsPromises from "fs/promises";
 import { makeFavicons, makeZip, postProcess } from "./utils.js";
 import fs from "fs";
+import cors from "cors";
 
 const app = express();
+
+const corsOptions = {
+  origin: "*",
+};
+app.use(cors(corsOptions));
+//pre flight request config
+app.options("*", cors(corsOptions));
+app.set("trust proxy", 1);
+
 app.use(express.json());
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,11 +89,10 @@ app.get("/api", async (req, res) => {
   try {
     console.log("Attempting to access:", downloadPath);
 
-    // Use fs.promises.access here
-    await fsPromises.access(downloadPath); // Make sure to use fs.promises.access
+    await fsPromises.access(downloadPath);
 
-    const { size } = await fsPromises.stat(downloadPath); // Use fs.promises.stat
-    const response = await fsPromises.readFile(downloadPath); // Use fs.promises.readFile
+    const { size } = await fsPromises.stat(downloadPath);
+    const response = await fsPromises.readFile(downloadPath);
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(

@@ -90,7 +90,7 @@ document
     formData.append("icon_image", imageFile);
     const appName = document.getElementById("appName").value || null;
 
-    const req = await fetch("http://localhost:2626/api", {
+    const req = await fetch("https://tagcraft.onrender.com/api", {
       method: "POST",
       body: {
         formData,
@@ -103,6 +103,6 @@ document
     const downloadDiv = document
       .querySelector(".download-btn-div")
       .classList.remove("hidden");
-    const downloadBtn = (document.getElementById("download-btn").href =
-      res.link);
+    const downloadBtn = document.getElementById("download-btn").href =
+    "https://tagcraft.onrender.com/api?q=" + res.id;
   });
