@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
     />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="rgb(0,0,0)" />
@@ -13,11 +13,11 @@
     <!--Main Site Information -->
     <meta name="application-name" content="" />
     <meta name="description" content="" />
-    
+
     <!-- Page Information -->
     <meta itemprop="name" content="" />
     <meta itemprop="description" content="" />
-    
+
     <!--og tags-->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="" />
@@ -55,7 +55,7 @@
             "name": "{website_name}",
             "publisher": {
               "@id": "{organization_url}#organization"
-            },
+            }
           },
           {
             "@type": "WebPage",
@@ -75,21 +75,39 @@
         ]
       }
     </script>
-    
+
     <!--Languages-->
     <link rel="alternate" href="" hreflang="en" />
-    
+
     <!--Favicons-->
     <link rel="shortcut icon" href="icons/favicon-16x16.png" />
-    
+
     <!-- General icons -->
-    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
-    
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="icons/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="icons/favicon-32x32.png"
+    />
+
     <!-- Apple touch icons -->
-    <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png" />
-    
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="icons/apple-touch-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="icons/apple-touch-icon-180x180.png"
+    />
+
     <!-- Microsoft-specific meta -->
     <meta name="msapplication-TileColor" content="#FFFFFF" />
     <meta name="msapplication-TileImage" content="icons/tile-144x144.png" />
@@ -98,14 +116,344 @@
     <meta name="google-site-verification" content="" />
     <meta name="msvalidate.01" content="" />
     <meta name="yandex-verification" content="" />
-    
+
     <!--Link tags-->
     <link rel="canonical" href="" />
     <!--Only for vite,delete in prod.-->
-    <link rel="stylesheet" href="/src/css/index.css">
+    <link rel="stylesheet" href="/src/css/index.css" />
     <script type="module" src="/src/js/index.js" defer></script>
-    <title></title>
+    <title>Tagcraft</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script>
+      partytown = {
+        forward: ["dataLayer.push"]
+      };
+    </script>
+    <script src="/~partytown/partytown.js" async></script>
+
+    <script
+      async
+      type="text/partytown"
+      src="https://www.googletagmanager.com/gtag/js?id=G-2XFEZTD5JV"
+    ></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-2XFEZTD5JV");
+    </script>
   </head>
-  <body>
+  <body class="bg-black font-sans antialiased text-white">
+    <div class="max-w-5xl mx-auto p-6 rounded-lg shadow-lg">
+      <h1 class="text-2xl font-bold mb-4 text-center">Meta Tag Generator</h1>
+      <form id="metaTagForm" class="space-y-6 rounded shadow-md">
+        <!-- General Meta Tags -->
+        <fieldset>
+          <legend class="text-lg font-semibold text-white">
+            General Meta Tags
+          </legend>
+          <div class="space-y-4">
+            <div>
+              <label
+                for="charset"
+                class="block text-sm font-medium text-gray-600"
+                >Charset:</label
+              >
+              <input
+                type="text"
+                id="charset"
+                value="UTF-8"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+                readonly
+              />
+            </div>
+            <div>
+              <label
+                for="viewport"
+                class="block text-sm font-medium text-gray-600"
+                >Viewport:</label
+              >
+              <input
+                type="text"
+                id="viewport"
+                value="width=device-width, initial-scale=1, maximum-scale=1"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+                readonly
+              />
+            </div>
+            <div>
+              <label
+                for="robots"
+                class="block text-sm font-medium text-gray-600"
+                >Robots:</label
+              >
+              <input
+                type="text"
+                id="robots"
+                value="index, follow"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="themeColor"
+                class="block text-sm font-medium text-gray-600"
+                >Theme Color:</label
+              >
+              <input
+                type="color"
+                id="themeColor"
+                value="#000000"
+                class="w-16 h-10 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="siteIcon"
+                class="block text-sm font-medium text-gray-600"
+                >Site Icon:</label
+              >
+              <input
+                type="file"
+                id="siteIcon"
+                accept="image/*"
+                name="icon_image"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Main Site Information -->
+        <fieldset>
+          <legend class="text-lg font-semibold text-white">
+            Main Site Information
+          </legend>
+          <div class="space-y-4">
+            <div>
+              <label
+                for="appName"
+                class="block text-sm font-medium text-gray-600"
+                >Application Name:</label
+              >
+              <input
+                type="text"
+                id="appName"
+                placeholder="Your app name"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="siteDescription"
+                class="block text-sm font-medium text-gray-600"
+                >Description:</label
+              >
+              <textarea
+                id="siteDescription"
+                placeholder="Brief site description"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              ></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Page Information -->
+        <fieldset>
+          <legend class="text-lg font-semibold text-white">
+            Page Information
+          </legend>
+          <div class="space-y-4">
+            <div>
+              <label
+                for="pageName"
+                class="block text-sm font-medium text-gray-600"
+                >Page Name:</label
+              >
+              <input
+                type="text"
+                id="pageName"
+                placeholder="Page name"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="pageDescription"
+                class="block text-sm font-medium text-gray-600"
+                >Page Description:</label
+              >
+              <textarea
+                id="pageDescription"
+                placeholder="Page description"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              ></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Open Graph Tags -->
+        <fieldset>
+          <legend class="text-lg font-semibold text-white">
+            Open Graph Tags
+          </legend>
+          <div class="space-y-4">
+            <div>
+              <label
+                for="ogSiteName"
+                class="block text-sm font-medium text-gray-600"
+                >Site Name:</label
+              >
+              <input
+                type="text"
+                id="ogSiteName"
+                placeholder="Open Graph site name"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="ogTitle"
+                class="block text-sm font-medium text-gray-600"
+                >Title:</label
+              >
+              <input
+                type="text"
+                id="ogTitle"
+                placeholder="Open Graph title"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="ogDescription"
+                class="block text-sm font-medium text-gray-600"
+                >Description:</label
+              >
+              <textarea
+                id="ogDescription"
+                placeholder="Open Graph description"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              ></textarea>
+            </div>
+            <div>
+              <label for="ogUrl" class="block text-sm font-medium text-gray-600"
+                >URL:</label
+              >
+              <input
+                type="url"
+                id="ogUrl"
+                placeholder="Page URL"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="ogImage"
+                class="block text-sm font-medium text-gray-600"
+                >Image URL:</label
+              >
+              <input
+                type="url"
+                id="ogImage"
+                placeholder="Image URL (Auto added)"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50" disabled
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Twitter Tags -->
+        <fieldset>
+          <legend class="text-lg font-semibold text-white">Twitter Tags</legend>
+          <div class="space-y-4">
+            <div>
+              <label
+                for="twitterSite"
+                class="block text-sm font-medium text-gray-600"
+                >Twitter Handle:</label
+              >
+              <input
+                type="text"
+                id="twitterSite"
+                placeholder="@YourTwitterHandle"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="twitterTitle"
+                class="block text-sm font-medium text-gray-600"
+                >Title:</label
+              >
+              <input
+                type="text"
+                id="twitterTitle"
+                placeholder="Twitter card title"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              />
+            </div>
+            <div>
+              <label
+                for="twitterDescription"
+                class="block text-sm font-medium text-gray-600"
+                >Description:</label
+              >
+              <textarea
+                id="twitterDescription"
+                placeholder="Twitter card description"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800"
+              ></textarea>
+            </div>
+            <div>
+              <label
+                for="twitterImage"
+                class="block text-sm font-medium text-gray-600"
+                >Image URL:</label
+              >
+              <input
+                type="url"
+                id="twitterImage"
+                placeholder="Image URL for Twitter (Auto added)"
+                class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 bg-gray-800 disabled:opacity-50" disabled
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Submit -->
+      <div class="flex justify-center items-center p-4 space-x-4">
+        <div class="text-center">
+          <button
+            type="submit"
+            class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
+          >
+            Generate Metadata
+          </button>
+        </div>
+                <div class="text-center hidden download-btn-div">
+          <button
+          id="download-btn"
+            type="submit"
+            class="p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:ring focus:ring-blue-300"
+          >
+            Download Package
+          </button>
+        </div>
+      </div>
+      </form>
+
+      <!-- Result -->
+      <div class="mt-10">
+        <h2 class="text-lg font-semibold mb-2">Generated Meta Tags</h2>
+        <pre
+          id="generatedTags"
+          class="bg-gray-200 rounded-md overflow-x-auto text-sm bg-gray-800 p-4"
+        ></pre>
+      </div>
+    </div>
   </body>
 </html>
