@@ -1,7 +1,7 @@
 import "../css/index.css";
 
 document
-  .getElementById("metaTagForm")
+  .getElementById("generate")
   .addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -80,29 +80,42 @@ document
     generatedTags.textContent = metaTags.trim();
   });
 
-document
-  .getElementById("siteIcon")
-  .addEventListener("change", async (event) => {
-    console.log("triggered", event);
-    event.preventDefault();
-    const formData = new FormData();
-    const imageFile = event.target.files[0];
-    formData.append("icon_image", imageFile);
-    const appName = document.getElementById("appName").value || null;
+document.getElementById("siteIcon").addEventListener("change", async (event) => {
+  event.preventDefault();
 
+  const formData = new FormData();
+  const imageFile = event.target.files[0];
+  formData.append("icon_image", imageFile);
+
+  const appName = document.getElementById("appName").value || null;
+  if (appName) {
+    formData.append("appName", appName);
+  }
+
+  try {
     const req = await fetch("https://tagcraft.onrender.com/api", {
       method: "POST",
-      body: {
-        formData,
-        appName,
-      },
+      body: formData,
     });
-    const res = await req.json();
-    if (!res.ok) throw new Error("An error occurred");
 
-    const downloadDiv = document
-      .querySelector(".download-btn-div")
-      .classList.remove("hidden");
-    const downloadBtn = document.getElementById("download-btn").href =
-    "https://tagcraft.onrender.com/api?q=" + res.id;
-  });
+    const res = await req.json();
+    if (!res.status || res.status !== "OK") {
+      throw new Error("An error occurred");
+    }
+
+    document.querySelector(".download-btn-div").classList.remove("hidden");
+    const downloadBtn =
+    document.getElementById("download-btn").addEventListener("click", (e) =>
+    {
+      e.preventDefault();
+      window.location.href = `https://tagcraft.onrender.com/api?q=${res.id}`;
+    });
+  } catch (err) {
+    console.error("Error during fetch:", err);
+  }
+});
+
+window.addEventListener("DOMContentLoaded",(e) => {
+  e.preventDefault();
+  fetch("https://tagcraft.onrender.com/api/status");
+});

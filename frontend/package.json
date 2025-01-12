@@ -35,6 +35,5 @@
     "terser-webpack-plugin": "^5.3.10"
   },
   "author": "thenetaji",
-  "license": "MIT",
-  "packageManager": "yarn@4.5.1"
+  "license": "MIT"
 }

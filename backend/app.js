@@ -108,6 +108,10 @@ app.get("/api", async (req, res) => {
   }
 });
 
+app.get("/api/status", (req,res) => {
+ res.end("Ok");
+});
+
 app.listen(2626, () => {
   const uploadDir = "./tmp/uploads";
   const buildDir = "./tmp/build";
